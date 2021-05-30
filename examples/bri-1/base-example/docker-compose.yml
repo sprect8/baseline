@@ -298,6 +298,7 @@ services:
       - LOG_LEVEL=DEBUG
       - PORT=8080
       - SEAL_UNSEAL_VALIDATION_HASH=0x05598175ac56c919ca39be16fdbb4335f755e53c27aca03717dc1b89e206aad1
+      - REDIS_HOSTS=alice-redis:6379
     healthcheck:
       test: ["CMD", "curl", "-f", "http://alice-vault:8080/status"]
       interval: 1m
@@ -635,6 +636,7 @@ services:
       - LOG_LEVEL=DEBUG
       - PORT=8080
       - SEAL_UNSEAL_VALIDATION_HASH=0x1c1381fd075f1ee3d42799bb8da0602a2afb9ef4b492bf1eae72399ecc81b0f0
+      - REDIS_HOSTS=bob-redis:6379
     healthcheck:
       test: ["CMD", "curl", "-f", "http://bob-vault:8080/status"]
       interval: 1m

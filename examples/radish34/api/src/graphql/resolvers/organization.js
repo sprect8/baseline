@@ -14,6 +14,7 @@ const NEW_ORG = 'NEW_ORG';
 
 const getOrganizationById = async address => {
   const organization = await db.collection('organization').findOne({ _id: address });
+  console.log(organization, address);
   return organization;
 };
 
@@ -22,6 +23,7 @@ const getAllOrganizations = async () => {
     .collection('organization')
     .find({})
     .toArray();
+    console.log("Organizations", organizations);
   return organizations;
 };
 
@@ -54,6 +56,7 @@ export default {
   Mutation: {
     registerOrganization: async (_root, args) => {
       const settings = await getServerSettings();
+      console.log("register organisation");
       const { zkpPublicKey, messagingKey, messagingEndpoint, address } = settings.organization;
 
       const orgRegistryTxHash = await registerToOrgRegistry(

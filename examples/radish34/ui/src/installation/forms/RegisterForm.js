@@ -31,11 +31,12 @@ const RegisterForm = () => {
   const { registerOrganizationInfo } = useContext(ServerSettingsContext);
 
   const onSubmit = async ({ organizationName, role }) => {
+    console.log(organizationName);
     await registerOrganizationInfo({
       variables: {
         input: {
-          name: organizationName,
-          role: role,
+          "name": organizationName,
+          "role": role,
         },
       },
     });

@@ -35,6 +35,7 @@ const MSACard = ({ msa, price, onClick, selected, volume }) => {
   const classes = useStyles();
   const normalise = (value, min, max) => (value - min) * 100 / (max - min);
   const latestCommitment = msa.commitments[msa.commitments.length - 1];
+  console.log(latestCommitment);
   const accumulatedVolumeOrdered = latestCommitment.variables.accumulatedVolumeOrdered;
   const valueForNormalise = () => {
     if (volume && !accumulatedVolumeOrdered) return volume;

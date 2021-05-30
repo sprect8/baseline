@@ -178,25 +178,25 @@ export class ParticipantStack {
             this.sendProtocolMessage(msg.sender, Opcode.Baseline, payload);
           });
         } else if (payload.signatures.length < workflowSignatories) {
-            if (payload.sibling_path && payload.sibling_path.length > 0) {
-              // perform off-chain verification to make sure this is a legal state transition
-              const root = payload.sibling_path[0];
-              const verified = this.baseline?.verify(this.contracts['shield'].address, payload.leaf, root, payload.sibling_path);
-              if (!verified) {
-                console.log('WARNING-- off-chain verification of proposed state transition failed...');
-                this.workgroupCounterparties.forEach(async recipient => {
-                  this.sendProtocolMessage(recipient, Opcode.Baseline, { err: 'verification failed' });
-                });
-                return Promise.reject('failed to verify');
-              }
+          if (payload.sibling_path && payload.sibling_path.length > 0) {
+            // perform off-chain verification to make sure this is a legal state transition
+            const root = payload.sibling_path[0];
+            const verified = this.baseline?.verify(this.contracts['shield'].address, payload.leaf, root, payload.sibling_path);
+            if (!verified) {
+              console.log('WARNING-- off-chain verification of proposed state transition failed...');
+              this.workgroupCounterparties.forEach(async recipient => {
+                this.sendProtocolMessage(recipient, Opcode.Baseline, { err: 'verification failed' });
+              });
+              return Promise.reject('failed to verify');
             }
+          }
 
-            // sign state transition
-            const signature = (await this.signMessage(vault.id!, this.babyJubJub?.id!, payload.hash)).signature;
-            payload.signatures.push(signature);
-            this.workgroupCounterparties.forEach(async recipient => {
-              this.sendProtocolMessage(recipient, Opcode.Baseline, payload);
-            });
+          // sign state transition
+          const signature = (await this.signMessage(vault.id!, this.babyJubJub?.id!, payload.hash)).signature;
+          payload.signatures.push(signature);
+          this.workgroupCounterparties.forEach(async recipient => {
+            this.sendProtocolMessage(recipient, Opcode.Baseline, payload);
+          });
         } else {
           // create state transition commitment
           payload.result = await this.generateProof('modify_state', JSON.parse(msg.payload.toString()));
@@ -221,7 +221,7 @@ export class ParticipantStack {
             this.workgroupCounterparties.forEach(async recipient => {
               await this.sendProtocolMessage(recipient, Opcode.Baseline, payload);
             });
-        } else {
+          } else {
             return Promise.reject('failed to insert leaf');
           }
         }
@@ -306,7 +306,7 @@ export class ParticipantStack {
     this.natsBearerTokens[messagingEndpoint] = invite.prvd.data.params.authorized_bearer_token;
     this.workflowIdentifier = invite.prvd.data.params.workflow_identifier;
 
-    await this.baseline?.track(invite.prvd.data.params.shield_contract_address).catch((err) => {});
+    await this.baseline?.track(invite.prvd.data.params.shield_contract_address).catch((err) => { });
     await this.registerOrganization(this.baselineConfig.orgName, this.natsConfig.natsServers[0]);
     await this.requireOrganization(await this.resolveOrganizationAddress());
     await this.sendProtocolMessage(counterpartyAddr, Opcode.Join, {
@@ -684,10 +684,12 @@ export class ParticipantStack {
 
   async deployBaselineCircuit(): Promise<any> {
     // compile the circuit...
+    console.log("Compiling Baseline circuits");
     await this.compileBaselineCircuit();
 
     // perform trusted setup and deploy verifier/shield contract
     const setupArtifacts = await this.zk?.setup(this.baselineCircuitArtifacts);
+
     const compilerOutput = JSON.parse(solidityCompile(JSON.stringify({
       language: 'Solidity',
       sources: {
@@ -712,16 +714,23 @@ export class ParticipantStack {
     await this.deployWorkgroupContract('Verifier', 'verifier', contractParams);
     await this.requireWorkgroupContract('verifier');
 
-    const shieldAddress = await this.deployWorkgroupShieldContract();
-    const trackedShield = await this.baseline?.track(shieldAddress);
-    if (!trackedShield) {
-      console.log('WARNING: failed to track baseline shield contract');
+    console.log("Deploy Workgroup Contract and verifier");
+    try {
+      const shieldAddress = await this.deployWorkgroupShieldContract();
+      const trackedShield = await this.baseline?.track(shieldAddress);
+      if (!trackedShield) {
+        console.log('WARNING: failed to track baseline shield contract');
+      }
+
+      this.baselineCircuitSetupArtifacts = setupArtifacts;
+      this.workflowIdentifier = this.baselineCircuitSetupArtifacts?.identifier;
+      console.log("completed deploying trusted setup");
+      return setupArtifacts;
     }
-
-    this.baselineCircuitSetupArtifacts = setupArtifacts;
-    this.workflowIdentifier = this.baselineCircuitSetupArtifacts?.identifier;
-
-    return setupArtifacts;
+    catch (e) {
+      console.log(e);
+      throw e;
+    }
   }
 
   async deployWorkgroupContract(name: string, type: string, params: any, arvg?: any[]): Promise<any> {
@@ -771,11 +780,13 @@ export class ParticipantStack {
 
     const argv = ['MerkleTreeSHA Shield', verifierContract.address, 32];
 
-    console.log(contractParams);
+    console.log(argv, contractParams);
 
     // deploy EYBlockchain's MerkleTreeSHA contract (see https://github.com/EYBlockchain/timber)
     await this.deployWorkgroupContract('ShuttleCircuit', 'circuit', contractParams, argv);
+    console.log("deploying workgroup contract");
     const shieldContract = await this.requireWorkgroupContract('shield');
+    console.log("deploying shield contract");
 
     return shieldContract.address;
   }

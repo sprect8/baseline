@@ -16,6 +16,12 @@ export default {
         organization: ${organization}
         addresses: ${addresses}
       `, { service: 'API' });
+      console.log(`
+        Getting server settings:
+        rpcProvider:`, rpcProvider,
+        `organization: `, organization,
+        `addresses:`, addresses);
+      
       // TODO: Edit ServerSettings graphQL schema to be a nested object with 'organizations' and 'addresses' sub-objects, to align with the radosh-api backend.
       const flattenedSettings = {
         rpcProvider,

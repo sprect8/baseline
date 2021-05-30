@@ -214,11 +214,14 @@ export const shouldBehaveLikeAnInitialWorkgroupOrganization = function () {
 
       describe('trusted setup', () => {
         before(async () => {
+          console.log("Deploying artifacts");
           setupArtifacts = await this.ctx.app.deployBaselineCircuit();
+          console.log("Deployed?", setupArtifacts);
           assert(setupArtifacts, 'setup artifacts should not be null');
         });
 
         it('should output a unique identifier for the circuit', async () => {
+          console.log("Setup Artifacts", setupArtifacts);
           assert(setupArtifacts.identifier, 'identifier should not be null');
         });
 

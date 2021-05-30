@@ -18,6 +18,7 @@ const main = async () => {
 
     // Sanity Check
     await saveOrganizations();
+    
     await subscribeRegisterOrgEvent();
 
     // filter for NewLeaves in the shield contract:

@@ -27,6 +27,8 @@ const App = () => {
       return <Loading />;
     }
 
+    console.log(state);
+
     if (state !== 'ready') {
       return <Installation state={state} />;
     }

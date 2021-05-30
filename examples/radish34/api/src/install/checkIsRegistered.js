@@ -6,6 +6,8 @@ export default async () => {
   const wallet = await getWallet();
   const orgInfo = await getRegisteredOrganization(wallet.signingKey.address);
 
+  console.log(orgInfo, wallet);
+
   if (orgInfo.role) {
     logger.info(`Your organization has already been registered with the registry.`, { service: 'API' });
     return true;

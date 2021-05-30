@@ -139,12 +139,13 @@ const registerOrganisation = async (
   organisationMessagingEndpoint = await organisationMessagingEndpointResolver.resolve(
     organisationName,
   );
+  console.log(organisationMessagingEndpoint);
   if (!organisationMessagingEndpoint) {
     organisationMessagingEndpoint = process.env[`MESSENGER_${organisationName.toUpperCase()}_URI`]; // Radish specific
-    organisationMessagingKey = await organisationMessagingKeyResolver.resolveMessagingKey(
-      organisationMessagingEndpoint,
-    );
   }
+  organisationMessagingKey = await organisationMessagingKeyResolver.resolveMessagingKey(
+    organisationMessagingEndpoint,
+  );
 
   const organisationWallet = await pathKeystoreResolver.getWallet(organisationName);
   const organisation = await organisationResolver.resolve(

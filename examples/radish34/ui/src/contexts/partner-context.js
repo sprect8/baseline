@@ -39,6 +39,8 @@ export const PartnerProvider = ({ children }) => {
     }
   }, [subscribeToMore]);
 
+  console.log("Error", error);
+
   if (loading) return <h1>Loading...</h1>;
   if (error) return <h1>Error</h1>;
 

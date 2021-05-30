@@ -37,8 +37,8 @@ const RegistryForm = () => {
     await registerOrganizationInfo({
       variables: {
         input: {
-          name: organizationName,
-          role: role,
+          "name": organizationName ? organizationName : "bob",
+          "role": role,
         },
       },
     });

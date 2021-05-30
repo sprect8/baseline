@@ -51,7 +51,7 @@ const UserSelection = () => {
     fetchHealthCheck();
   }, [fetchHealthCheck]);
 
-  useEffect(() => {
+  useEffect(() => {    
     if (organizationAddress) localStorage.setItem('userAddress', organizationAddress);
   }, [organizationAddress]);
 

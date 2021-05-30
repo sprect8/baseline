@@ -61,7 +61,9 @@ export const registerToOrgRegistry = async (
   zkpPublicKey,
   metadata,
 ) => {
+  console.log("Register to org registry!", address, name, metadata, messagingEndpoint, messagingKey, zkpPublicKey);
   const config = await getServerSettings();
+  console.log("Get Server Settings");
   const privateKey = await getPrivateKey();
   const tx = await getContractWithWallet(
     getContractJson('OrgRegistry'),
@@ -70,11 +72,11 @@ export const registerToOrgRegistry = async (
     privateKey,
   ).registerOrg(
     address,
-    utils.formatBytes32String(name),
-    utils.hexlify(messagingEndpoint),
+    utils.formatBytes32String(name || ""),
+    utils.formatBytes32String(messagingEndpoint),
     utils.hexlify(messagingKey),
     utils.hexlify(zkpPublicKey),
-    utils.hexlify(metadata),
+    utils.formatBytes32String(metadata || ""),
   );
 
   const transactionHash = { transactionHash: tx.hash };
@@ -102,7 +104,15 @@ export const listOrganizations = async () => {
     '0x3f7eB8a7d140366423e9551e9532F4bf1A304C65'
   ]
 
-  const organizationList = await Promise.all(organizations.map(async org => {
+  const roles = [
+    "1",
+    "2",
+    "2"
+  ]
+
+  // todo: consider "role" to be included in org details below
+
+  const organizationList = await Promise.all(organizations.map(async (org, idx) => {
     const onchainOrg = await getRegisteredOrganization(org);
 
     return {
@@ -112,6 +122,8 @@ export const listOrganizations = async () => {
       messagingKey: onchainOrg.messagingKey,
       zkpPublicKey: onchainOrg.zkpPublicKey,
       metadata: onchainOrg.metadata,
+      role: roles[idx],
+      identity: onchainOrg.messagingKey
     };
   }));
 
@@ -126,6 +138,12 @@ export const getRegisteredOrganization = async walletAddress => {
     config.addresses.OrgRegistry,
   ).getOrg(walletAddress);
 
+  const organizations = [
+    '0xB5630a5a119b0EAb4471F5f2d3632e996bf95d41',
+    '0x5ACcdCCE3E60BD98Af2dc48aaf9D1E35E7EC8B5f',
+    '0x3f7eB8a7d140366423e9551e9532F4bf1A304C65'
+  ]
+
   return {
     address: organization[0],
     name: utils.parseBytes32String(organization[1]),
@@ -133,6 +151,7 @@ export const getRegisteredOrganization = async walletAddress => {
     messagingKey: utils.toUtf8String(organization[3]),
     zkpPublicKey: utils.toUtf8String(organization[4]),
     metadata: utils.toUtf8String(organization[5]),
+    role: organizations.indexOf(organization[0] === 0 ? 1 : 2),
   };
 };
 
@@ -172,6 +191,8 @@ export const saveOrganizations = async () => {
         messagingKey: org[i].messagingKey,
         zkpPublicKey: org[i].zkpPublicKey,
         metadata: org[i].metadata,
+        role: org[i].role,
+        identity: org[i].messagingKey,
       };
       saveOrganization(record);
     }

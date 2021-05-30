@@ -41,6 +41,7 @@ class BaselineWorkgroupManager {
     organisationMetadata,
     transactionOverrides,
   ) {
+    console.log(organisationMessagingKey);
     const tx = await this.orgRegistryContract.registerOrg(
       organisationAddress,
       ethers.utils.formatBytes32String(organisationName),

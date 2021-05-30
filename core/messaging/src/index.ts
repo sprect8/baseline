@@ -1,11 +1,13 @@
 import { natsServiceFactory } from './providers/nats';
 import { WhisperService } from './providers/whisper';
+import { WakuService } from './providers/waku2';
 
 export const messagePayloadTypeJson = 'json';
 export const messagePayloadTypeBinary = 'binary';
 
 export const messagingProviderNats = 'nats';
 export const messagingProviderWhisper = 'whisper';
+export const messagingProviderWaku = 'waku';
 
 export interface IMessagingService {
   connect(): Promise<any>;
@@ -31,6 +33,9 @@ export async function messagingServiceFactory(
       break;
     case messagingProviderNats:
       service = await natsServiceFactory(config);
+      break;
+    case messagingProviderWaku:
+      service = await new WakuService(config);
       break;
     default:
       throw new Error('messaging service provider required');

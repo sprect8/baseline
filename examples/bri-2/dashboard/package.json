@@ -23,7 +23,6 @@
     "@metamask/detect-provider": "^1.2.0",
     "@popperjs/core": "2.5.1",
     "@tailwindcss/custom-forms": "0.2.1",
-    "@types/react": "16.9.49",
     "@zeit/next-css": "1.0.1",
     "@zeit/next-sass": "1.0.1",
     "axios": "^0.20.0",

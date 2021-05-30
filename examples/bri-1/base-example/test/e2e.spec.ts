@@ -30,6 +30,7 @@ const setupUser = async (identHost, firstname, lastname, email, password) => {
   const auth = await authenticateUser(identHost, email, password);
   const bearerToken = auth.token.token;
   assert(bearerToken, `failed to authorize bearer token for user ${email}`);
+  console.log("bearer token is", user, bearerToken);
   return [user, bearerToken];
 };
 
