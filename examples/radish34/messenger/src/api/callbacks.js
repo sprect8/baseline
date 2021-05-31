@@ -8,10 +8,13 @@ const Message = require('../db/models/Message');
 
 const radishApiUrl = process.env.RADISH_API_URL ? `${process.env.RADISH_API_URL}/api/v1` : 'http://localhost:8101/api/v1';
 
+// note: callback on waku services
+
 //const processWhisperMessage = async (metadata) => {
-async function processWhisperMessage(metadata) {
-  const web3 = await new Web3();
-  const payloadAscii = await web3.utils.toAscii(metadata.payload);
+async function processWhisperMessage(metadata) {  
+  // const web3 = await new Web3();
+  const payloadAscii = metadata.content; //await web3.utils.toAscii(metadata.payload);
+  console.log("Received data", metadata, metadata.content);
   // Check if this is a JSON structured message
   const [isJSON, messageObj] = await hasJsonStructure(payloadAscii);
   // Store raw message

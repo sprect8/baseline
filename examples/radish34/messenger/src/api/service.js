@@ -10,19 +10,20 @@ let messenger;
 async function initialize() {
   // Retrieve messenger instance and pass to helper classes
   // Modularized here to enable use of other messenger services in the future
-  logger.info('Initializing server...');
-  messenger = await messagingServiceFactory(provider = 'whisper', { clientUrl: Config.clientUrl });
+  logger.info('Initializing server... - ', Config.messagingType);
+  messenger = await messagingServiceFactory(provider = Config.messagingType, { clientUrl: Config.clientUrl });
   await messenger.connect();
   const connected = await messenger.isConnected();
 
   // Retrieve pre-existing whisper identities from db and load into geth node
   // (this must be done each time the geth node is restarted)
-  if (Config.messagingType === 'whisper') {
-    const identities = await getIdentities();
-    const loadedIds = await messenger.loadIdentities(identities, DEFAULT_TOPIC, processWhisperMessage);
-    // Update keyIds in db
-    await loadedIds.forEach((id) => addIdentity(id));
-  }
+  // if (Config.messagingType === 'whisper') {
+  const identities = await getIdentities();
+  console.log("Identities are", identities);
+  const loadedIds = await messenger.loadIdentities(identities, DEFAULT_TOPIC, processWhisperMessage);
+  // Update keyIds in db
+  await loadedIds.forEach((id) => addIdentity(id));
+  // }
   return connected;
 }
 

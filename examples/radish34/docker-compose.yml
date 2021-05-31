@@ -279,7 +279,7 @@ services:
       - ./messenger/config/docker.env
     environment:
       LOG_LEVEL: debug
-      MESSENGER_PROVIDER: whisper
+      MESSENGER_PROVIDER: waku
       DB_URL: mongodb://mongo-buyer:27017/radish34
       MESSENGER_API_PORT: 4001
       CLIENT_URL: ws://geth-node:8546
@@ -310,7 +310,7 @@ services:
       dockerfile: ./Dockerfile
     environment:
       LOG_LEVEL: debug
-      MESSENGER_PROVIDER: whisper
+      MESSENGER_PROVIDER: waku
       DB_URL: mongodb://mongo-supplier1:27017/radish34
       MESSENGER_API_PORT: 4001
       CLIENT_URL: ws://geth-node:8546
@@ -341,7 +341,7 @@ services:
       dockerfile: ./Dockerfile
     environment:
       LOG_LEVEL: debug
-      MESSENGER_PROVIDER: whisper
+      MESSENGER_PROVIDER: waku
       DB_URL: mongodb://mongo-supplier2:27017/radish34
       MESSENGER_API_PORT: 4001
       CLIENT_URL: ws://geth-node:8546

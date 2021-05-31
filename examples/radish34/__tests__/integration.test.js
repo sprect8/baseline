@@ -112,6 +112,7 @@ describe('Buyer sends new RFP to both suppliers', () => {
   describe('Retrieve identities from messenger', () => {
     test('Buyer messenger GET /identities', async () => {
       const res = await request(buyerMessengerURL).get('/api/v1/identities');
+      console.log("buyer x is", res.body[0].publicKey);
       expect(res.statusCode).toEqual(200);
       expect(res.body.length).toBeGreaterThan(0);
       expect(buyer.messagingKey).toEqual(res.body[0].publicKey);
@@ -119,6 +120,7 @@ describe('Buyer sends new RFP to both suppliers', () => {
 
     test('Supplier2 messenger GET /identities', async () => {
       const res = await request(supplier2MessengerURL).get('/api/v1/identities');
+      console.log("supplier2 x is", res.body[0].publicKey);
       expect(res.statusCode).toEqual(200);
       expect(res.body.length).toBeGreaterThan(0);
       expect(supplier2.messagingKey).toEqual(res.body[0].publicKey);

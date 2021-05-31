@@ -65,6 +65,7 @@ const getUnsignedContractDeployment = (contractJson, args = []) => {
 
 const getContract = (contractJson, uri, address) => {
   try {
+    console.log(uri, address, "withoutWallet");
     const provider = getProvider(uri);
     return new ethers.Contract(address, contractJson.abi, provider);
   } catch (error) {
@@ -75,6 +76,7 @@ const getContract = (contractJson, uri, address) => {
 
 const getContractWithWallet = (contractJson, contractAddress, uri, privateKey) => {
   let contract = null;
+  console.log(uri, privateKey, "withWallet");
   try {
     const provider = getProvider(uri);
     const wallet = new ethers.Wallet(privateKey, provider);

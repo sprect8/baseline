@@ -1,3 +1,34 @@
+# WAKU Hackathon Notes
+The original Baseline Reference Implementation (Radish34) demonstrated a decentralised supply chain and procurement solution between a buyer and two suppliers.
+
+Radish34 used the Whisper Protocol for secure, decentralised message transfers between these participants; however as the protocol has since been deprecated, Baseline now relies on NATS. Given the roots of WAKU we believe that we can modify the existing Baseline implementation to run the secure, decentralised messaging protocol on top of WAKU. 
+
+This solution will demonstrate Radish34 operating on top of Waku, extending the existing 
+
+## Setup
+
+
+### Special configuration
+The messenger service imports `@baseline-protocol/messaging` npm package. If you want to make modifications to the package's source code, you can edit the files in `<repo_root>/baseline/core/messaging`. For a local node process to use those files instead of importing the npm package from a remote registry, you can create an `npm link`:
+```
+cd <repo_root>/baseline/core/messaging
+npm link
+cd ../../examples/radish34/messenger
+npm link @baseline-protocol/messaging
+npm ls -g --depth=0 --link=true
+npm install --link
+```
+To remove the npm link use the following command:
+```
+npm unlink @baseline-protocol/messaging -g 
+```
+
+## Demo and Operations
+
+
+## Improvements
+
+
 # Baseline Protocol
 
 <div align="center">

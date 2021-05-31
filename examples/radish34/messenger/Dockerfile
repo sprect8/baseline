@@ -10,16 +10,29 @@ COPY --from=logger /logger/dist ./dist
 COPY --from=logger /logger/package.json /logger/package-lock.json /logger/.babelrc ./
 RUN npm ci
 
-RUN mkdir ../app
-WORKDIR ../app
+RUN mkdir /baseline
+WORKDIR /baseline
+ADD ./baseline /baseline
+
+RUN ls /baseline/
+
+WORKDIR /baseline/messaging
+RUN npm link
+RUN npm run build
+
+RUN mkdir /app
+WORKDIR /app
 
 # Install app dependencies
 # A wildcard is used to ensure both package.json AND package-lock.json are copied
 # where available (npm@5+)
 COPY package*.json ./
 
+RUN npm link @baseline-protocol/messaging
 # Install packages
-RUN npm ci
+RUN npm install --link
+
+
 
 # Bundle app source
 # See ignore for exclusions
