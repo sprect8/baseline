@@ -72,6 +72,7 @@ async function getSingleMessage(messageId) {
  * @param {String} content 
  */
 async function storeNewMessage(messageData, content) {
+  console.log("Message and Data", messageData);
   const { hash, recipientPublicKey, sig, ttl, topic, pow, timestamp } = messageData;
   let payload = content;
   if (typeof content === 'object') {

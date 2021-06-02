@@ -145,9 +145,11 @@ router.get('/messages/:messageId', async (req, res) => {
  */
 router.post('/messages', async (req, res) => {
   const myId = await findIdentity(req.headers['x-messenger-id']);
+  console.log("MESSAGES >> x-message is", req.headers['x-messenger-id'], myId);
+
   let senderId;
   if (myId) {
-    senderId = myId.keyId;
+    senderId = myId.publicKey;
   }
 
   if (!req.body.payload) {

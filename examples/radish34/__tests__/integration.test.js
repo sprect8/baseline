@@ -217,12 +217,14 @@ describe('Buyer sends new RFP to both suppliers', () => {
         }
         await new Promise((r) => setTimeout(r, 1000));
       }
+      console.log("Buyer RFP ID", rfpId, res.body);
       expect(res.statusCode).toEqual(200);
       expect(res.body.data.rfp._id).toEqual(rfpId);
       expect(res.body.data.rfp.sku).toEqual(sku);
     });
 
     test('Supplier1 graphql query rfp() returns 200', async () => {
+      console.log("RFP ID is", rfpId);
       const queryBody = `{ rfp(uuid: "${rfpId}") { _id, sku } } `
       // Wait for db to update
       let res;
@@ -235,12 +237,16 @@ describe('Buyer sends new RFP to both suppliers', () => {
         }
         await new Promise((r) => setTimeout(r, 1000));
       }
+      console.log("Supplier1 RFP ID", rfpId, res.body);
+
       expect(res.statusCode).toEqual(200);
       expect(res.body.data.rfp._id).toEqual(rfpId);
       expect(res.body.data.rfp.sku).toEqual(sku);
     });
 
     test('Supplier2 graphql query rfp() returns 200', async () => {
+      console.log("RFP ID is", rfpId);
+
       const queryBody = `{ rfp(uuid: "${rfpId}") { _id, sku } } `
       // Wait for db to update
       let res;
@@ -253,6 +259,8 @@ describe('Buyer sends new RFP to both suppliers', () => {
         }
         await new Promise((r) => setTimeout(r, 1000));
       }
+      console.log("Supplier2 RFP ID", rfpId, res.body);
+
       expect(res.statusCode).toEqual(200);
       expect(res.body.data.rfp._id).toEqual(rfpId);
       expect(res.body.data.rfp.sku).toEqual(sku);
@@ -268,8 +276,10 @@ describe('Buyer sends new RFP to both suppliers', () => {
       const res = await request(buyerApiURL)
         .post('/graphql')
         .send({ query: queryBody });
+        console.log("buyer raw message supplier1", res.body);
       expect(res.statusCode).toEqual(200);
       const origination = res.body.data.rfp.recipients[0].origination;
+      console.log("origination", res.body.data.rfp.recipients);
       expect(origination.receiptDate).not.toBeUndefined();
       messageId1 = origination.messageId;
       const messageRes = await request(buyerMessengerURL)
@@ -285,8 +295,10 @@ describe('Buyer sends new RFP to both suppliers', () => {
       const res = await request(buyerApiURL)
         .post('/graphql')
         .send({ query: queryBody });
+      console.log("buyer raw message supplier2", res.body.data.rfp.recipients, rfpId);
       expect(res.statusCode).toEqual(200);
       const origination = res.body.data.rfp.recipients[1].origination;
+      console.log("origination", origination);
       expect(origination.receiptDate).not.toBeUndefined();
       messageId2 = origination.messageId;
       const messageRes = await request(buyerMessengerURL)
@@ -301,6 +313,7 @@ describe('Buyer sends new RFP to both suppliers', () => {
       const messageRes = await request(supplier1MessengerURL)
         .get(`/api/v1/messages/${messageId1}`)
         .set('x-messenger-id', supplier1.messagingKey);
+        console.log("supplier1 raw message", messageRes.body, messageId1);
       expect(messageRes.statusCode).toEqual(200);
       const payload = JSON.parse(messageRes.body.payload)
       expect(payload.uuid).toEqual(rfpId);
@@ -310,6 +323,7 @@ describe('Buyer sends new RFP to both suppliers', () => {
       const messageRes = await request(supplier2MessengerURL)
         .get(`/api/v1/messages/${messageId2}`)
         .set('x-messenger-id', supplier2.messagingKey);
+      console.log("buyer raw message", messageRes.body, messageId2);
       expect(messageRes.statusCode).toEqual(200);
       const payload = JSON.parse(messageRes.body.payload)
       expect(payload.uuid).toEqual(rfpId);
@@ -397,6 +411,7 @@ describe('Supplier2 sends new Proposal to buyer', () => {
   });
 });
 
+
 describe('Buyer creates MSA, signs it, sends to Supplier2, Supplier2 responds with signed MSA', () => {
   const supplierAddressPadded = `0x000000000000000000000000${supplier2.address.substring(2)}`;
   const sku = 'FAKE-SKU-123';
@@ -477,6 +492,7 @@ describe('Buyer creates MSA, signs it, sends to Supplier2, Supplier2 responds wi
     });
 
     test('After a while, the commitment index should not be null', async () => {
+      console.log("msaId is", msaId);
       const queryBody = `{ msa(id:"${msaId}")
                             {
                               _id,
@@ -497,6 +513,7 @@ describe('Buyer creates MSA, signs it, sends to Supplier2, Supplier2 responds wi
           console.log('...MSA commitment test complete.');
           break;
         }
+        console.log("Result is", res.body.data.msa.commitments);
         await new Promise((r) => setTimeout(r, 20000));
       }
       expect(res.statusCode).toEqual(200);

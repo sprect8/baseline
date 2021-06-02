@@ -13,7 +13,7 @@ const POW_TARGET = process.env.WHISPER_POW_TARGET || 2;
  * @param {String} str 
  */
 function hasJsonStructure(str) {
-  if (typeof str !== 'string') return false;
+  if (typeof str !== 'string') return [false, {}];
   try {
     const result = JSON.parse(str);
     const type = Object.prototype.toString.call(result);

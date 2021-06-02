@@ -81,6 +81,7 @@ export default {
   Mutation: {
     createMSA: async (_parent, args, context) => {
       logger.info(`Request to create MSA with inputs:\n%o`, args.input, { service: 'API' });
+      console.log(context);
       const _supplier = await getPartnerByAddress(args.input.supplierAddress);
       delete _supplier._id;
       delete args.input.supplierAddress;

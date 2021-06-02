@@ -22,7 +22,7 @@ router.post('/documents', async (req, res) => {
         docId = (await partnerCreateRFP(messageObj))._id;
       } catch (error) {
         res.status(400);
-        res.send({ message: 'Could not create new RFP. Required fields: uuid' });
+        res.send({ message: 'Could not create new RFP. Required fields: uuid. Error was' + error });
         return;
       }
       break;
@@ -80,9 +80,11 @@ router.post('/documents', async (req, res) => {
     case 'msa_create':
       try {
         logger.info(`Received MSA:\n%o`, messageObj, { service: 'API' });
+        console.log("Sender is", senderId)
         onReceiptMSASupplier(messageObj, senderId);
         docId = _id;
       } catch (error) {
+        console.log("Error", error);
         res.status(400);
         res.send({ message: error });
       }
@@ -128,8 +130,7 @@ router.post('/documents', async (req, res) => {
     default:
       logger.info(`Did not recognize message object type:\n%o`, messageObj, { service: 'API' });
   }
-  res.status(200);
-  res.send({ message: `Document (ID: ${docId}) added or updated in radish-api` });
+  res.status(200).send({ message: `Document (ID: ${docId}) added or updated in radish-api` });
 });
 
 export default router;

@@ -13,10 +13,11 @@ const radishApiUrl = process.env.RADISH_API_URL ? `${process.env.RADISH_API_URL}
 //const processWhisperMessage = async (metadata) => {
 async function processWhisperMessage(metadata) {  
   // const web3 = await new Web3();
-  const payloadAscii = metadata.content; //await web3.utils.toAscii(metadata.payload);
-  console.log("Received data", metadata, metadata.content);
+  const payloadAscii = metadata.payload; //await web3.utils.toAscii(metadata.payload);
+  console.log("Received data", metadata, metadata.payload);
   // Check if this is a JSON structured message
   const [isJSON, messageObj] = await hasJsonStructure(payloadAscii);
+  console.log("messageObj is", isJSON, messageObj);
   // Store raw message
   let doc = await storeNewMessage(metadata, payloadAscii);
   if (isJSON) {
@@ -47,7 +48,7 @@ async function processWhisperMessage(metadata) {
     // Adding sender Id to message to know who sent the message
     messageObj.senderId = metadata.sig;
     // Send all JSON messages to processing service
-    forwardMessage(messageObj);
+    await forwardMessage(messageObj);
   } else { // Text message
     await sendDeliveryReceipt.call(this, metadata);
   }
@@ -78,6 +79,7 @@ async function forwardMessage(messageObj) {
     logger.info(`${response.status} -`, response.data);
   } catch (error) {
     logger.error(`ERROR: POST ${radishApiUrl}/documents`);
+    console.log(error);
     if (error.response) {
       logger.error(`${error.response.status} -`, error.response.data);
     }

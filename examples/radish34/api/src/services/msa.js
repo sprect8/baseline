@@ -220,6 +220,7 @@ export const getMSABySKUAndParties = async (zkpPublicKeyOfBuyer, zkpPublicKeyOfS
 export const getMSAById = async id => {
   try {
     const msa = await MSAModel.findOne({ _id: id }).lean();
+    console.log("Found MSA", msa);
     return msa;
   } catch (err) {
     logger.error('Error getting MSA from db.\n%o', err, { service: 'API' });
@@ -274,9 +275,10 @@ export const saveMSA = async msaObject => {
   );
   if (exists) {
     logger.error(`MSA already exists for this SKU ${msaObject.constants.sku} with this supplier.`, { service: 'API' });
-    throw new Error(
-      `MSA already exists for this SKU ${msaObject.constants.sku} with this supplier.`,
-    );
+    // throw new Error(
+    //   `MSA already exists for this SKU ${msaObject.constants.sku} with this supplier.`,
+    // );
+    return exists;
   }
   try {
     const doc = await MSAModel.create([msaObject], { upsert: true, new: true });
@@ -474,7 +476,9 @@ export const createMSA = async msa => {
 
 export const onReceiptMSASupplier = async (msaObj, senderWhisperKey) => {
   const msa = await saveMSA(msaObj);
+  console.log("Saving", msaObj, senderWhisperKey);
   const partner = await getPartnerByMessagingKey(senderWhisperKey);
+  console.log("Partner is", partner);
   const { organization } = await getServerSettings();
   const { zkpPrivateKey } = organization;
 

@@ -93,7 +93,8 @@ export class WakuService implements IMessagingService {
     recipientId: string,
     senderId: string): Promise<any> {
     // this.service!.publish(subject, data);
-    console.log("publishing", subject, data);
+    console.log("publishing", subject, data)
+    console.log("Receipt", recipientId, senderId);
     let content = data;
     if (typeof data === "object") {
       content = JSON.stringify(data);
@@ -116,7 +117,9 @@ export class WakuService implements IMessagingService {
       powTime: POW_TIME,
       powTarget: POW_TARGET,
     };
-    const hash = data._id;
+    const web3 = await getWeb3(this.clientUrl);
+
+    const hash = web3.utils.sha3(JSON.stringify(messageObj));
     const time = Math.floor(Date.now() / 1000);
     const publicKey = senderId;
 
@@ -131,9 +134,12 @@ export class WakuService implements IMessagingService {
       pow: POW_TARGET,
       timestamp: time
     };
-    const chatMessage = ChatMessage.fromUtf8String(new Date(), senderId, JSON.stringify(result));
+    const chatMessage = ChatMessage.fromUtf8String(new Date(), keyId, JSON.stringify(result));
     const wakuMsg = WakuMessage.fromBytes(chatMessage.encode(), subject);
     this.service?.relay.send(wakuMsg);
+    console.log("SENT", result);
+
+    return result;
   }
 
   async request(subject: string, timeout: number, data: object = {}): Promise<any> {
@@ -146,8 +152,6 @@ export class WakuService implements IMessagingService {
     subject: string,
     callback: (msg: any, err?: any) => void,
   ): Promise<void> {
-
-    console.log("subscribing to topic", subject);
     // await this.service!.subscribe(subject, (msg: any, err?: any): void => {
     //   callback(msg, err);
     // });
@@ -158,11 +162,11 @@ export class WakuService implements IMessagingService {
           //   const { hash, recipientPublicKey, sig, ttl, topic, pow, timestamp } = messageData;
           const obj = JSON.parse(msg.payloadAsUtf8);
           
-          callback(obj);
+          callback.call(this, obj);
         }
         else {
           // error
-          callback(message.payload, "Failed - msg could not be decoded!");
+          callback.call(this, message.payload, "Failed - msg could not be decoded!");
         }
       }
     }, [subject]);
@@ -206,6 +210,7 @@ export class WakuService implements IMessagingService {
         }
       }));
     };
+    console.log("Loaded Identities", loadedIds);
     this.keyId = loadedIds[0]['keyId'];
     return loadedIds;
   }

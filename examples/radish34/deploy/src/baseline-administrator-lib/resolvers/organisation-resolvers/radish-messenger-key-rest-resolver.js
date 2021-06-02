@@ -20,6 +20,7 @@ class RadishMessagingKeyRestResolver {
   async resolveMessagingKey(organisationMessengerURL) {
     assert(organisationMessengerURL, `organisationMessengerURL is needed to resolve the messenger key`);
     const messagingKey = await getWhisperIdentity(`${organisationMessengerURL}/api/v1/identities`);
+	console.log("Received messaging key from server: ", messagingKey);
 
     return messagingKey;
   }
