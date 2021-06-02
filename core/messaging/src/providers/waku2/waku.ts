@@ -22,11 +22,11 @@ const POW_TARGET = process.env.WHISPER_POW_TARGET || 2;
 
 function getNodes() {
   // Works with react-scripts
-  if (process?.env?.NODE_ENV === 'development') {
+  //if (process?.env?.NODE_ENV === 'development') {
     return getStatusFleetNodes(Environment.Test);
-  } else {
-    return getStatusFleetNodes(Environment.Prod);
-  }
+  //} else {
+  //  return getStatusFleetNodes(Environment.Prod);
+  //}
 }
 
 export class WakuService implements IMessagingService {
