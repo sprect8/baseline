@@ -1,6 +1,8 @@
 # WAKU Hackathon Notes
 The Baseline Protocol combines advances in cryptography, messaging and blockchain to deliver secure and private business processes at low cost on the public main-net. The protocol enables confidential and complex collaboration between enterprises without moving any sensitive data from traditional systems of records. Officially Baseline is managed by the OASIS foundation and originally contributed by ConsenSys, Microsoft and Ernst & Young (For some background information, check out [this section](https://docs.baseline-protocol.org/baseline-protocol/the-baseline-protocol))
 
+Video discussing the Hackathon: [video](https://youtu.be/_obut1ULmx4)
+
 The original Baseline Reference Implementation (Radish34) demonstrated a decentralised supply chain and procurement solution between a buyer and two suppliers.
 
 Radish34 originally used the Whisper Protocol for secure, decentralised message transfers between these participants; however as the protocol has since been deprecated, Baseline now relies on NATS. Given the roots of WAKU we believe that we can modify the existing Baseline implementation to run the secure, decentralised messaging protocol on top of WAKU. 
@@ -50,7 +52,7 @@ The above configuration is managed for you in the rebuild.sh script in the radis
 If you have a WAKU chat client handy, connect it to the 0x11223344 and you can see the history of all messages sent during demo purposes. (see ![waku transactions](waku.transactions.txt) for example transaction set).
 
 Please also visit the youtube link for a brief walkthrough of the project.
-
+Video discussing the Hackathon: [video](https://youtu.be/_obut1ULmx4)
 
 
 ## Improvements and Next Steps
