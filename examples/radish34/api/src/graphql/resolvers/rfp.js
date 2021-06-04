@@ -43,6 +43,7 @@ export default {
       rfpDetails.type = 'rfp_create';
       rfpDetails.uuid = rfp._id;
       recipients.forEach(recipient => {
+        console.log("Sending for recipient", recipient);
         // For data structure parity between buyer/supplier systems
         // put the recipient back as the only entry in the array
         const rfpToSend = { ...rfpDetails, recipients: [recipient] };

@@ -31,6 +31,7 @@ function getNodes() {
 
 export class WakuService implements IMessagingService {
   public keyId: string;
+  private publicKey: string;
   private clientUrl: string;
   private service?: Waku | null;
   private listenerMap: {};
@@ -39,6 +40,7 @@ export class WakuService implements IMessagingService {
     private readonly config,
   ) {
     this.keyId = config.keyId;
+    this.publicKey = this.keyId;
     this.clientUrl = config.clientUrl;
     this.listenerMap = {};
   }
@@ -161,6 +163,13 @@ export class WakuService implements IMessagingService {
         if (msg) {
           //   const { hash, recipientPublicKey, sig, ttl, topic, pow, timestamp } = messageData;
           const obj = JSON.parse(msg.payloadAsUtf8);
+
+          console.log("Received message", obj);
+          console.log("My ID is: ", this.publicKey);
+          if (obj.recipientPublicKey && obj.recipientPublicKey !== this.publicKey) {
+            console.log("Ignore as this is not our message");
+            return;
+          }
           
           callback.call(this, obj);
         }
@@ -212,6 +221,7 @@ export class WakuService implements IMessagingService {
     };
     console.log("Loaded Identities", loadedIds);
     this.keyId = loadedIds[0]['keyId'];
+    this.publicKey = loadedIds[0]['publicKey'];
     return loadedIds;
   }
 
@@ -225,6 +235,7 @@ export class WakuService implements IMessagingService {
 
     await this.subscribe(topic, callback);
     this.keyId = keyId;
+    this.publicKey = publicKey;
     return { publicKey, privateKey, keyId, createdDate };
   }
 }

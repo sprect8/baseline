@@ -49,15 +49,15 @@ const ProposalForm = ({ rfp }) => {
     label: 'Select payment token'
   },
   {
-    value: '0x1234',
+    value: '0xcd234a471b72ba2f1ccf0a70fcaba648a5eecd8d',
     label: 'USD',
   },
   {
-    value: '0x3451',
+    value: '0xcd234a471b72ba2f1ccf0a70fcaba648a5eecd8d',
     label: 'GBP',
   },
   {
-    value: '0x4562',
+    value: '0xcd234a471b72ba2f1ccf0a70fcaba648a5eecd8d',
     label: 'EUR',
   }];
 
